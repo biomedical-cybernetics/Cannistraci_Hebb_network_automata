@@ -2,12 +2,16 @@ MATLAB code to compute the Cannistraci-Hebb (CH) network automata scores
 for network links considering paths of length two (L2) or three (L3)
 
 
-### REFERENCE ###
+### REFERENCES ###
 
 "Local-community network automata modelling based on length-three-paths
 for prediction of complex network structures in protein interactomes, food webs and more"
 A. Muscoloni, I. Abdelhamid, C. V. Cannistraci, bioRxiv, 2018
 https://doi.org/10.1101/346916
+
+"Adaptive Network Automata Modelling of Complex Networks"
+A. Muscoloni, U. Michieli, C. V. Cannistraci, Preprints, 2021
+https://www.preprints.org/manuscript/202012.0808/v2
 
 
 ### INPUT ###
