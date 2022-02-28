@@ -70,7 +70,7 @@ end
 
 % initialization
 m = size(w,1);
-deg = full(sum(x,1));
+d = full(sum(x,1));
 if any(L==[0,2])
     scores_CH2_L2 = zeros(m,1);
 end
@@ -94,33 +94,26 @@ parfor (i = 1:m, par)
     end
     
     % L2
-    [CN,CNu,CNv] = intersect(Au,Av);
-    if any(L==[0,2]) && ~isempty(CN)
-        % compute internal degree and external degree
-        deg_i = sum(x(CN,CN),1);
-        deg_e = deg(CN) - deg_i - 2;
-        
-        % compute score
-        scores_CH2_L2(i) = sum((1+deg_i)./(1+deg_e));
+    cn = intersect(Au,Av);
+    if any(L==[0,2]) && ~isempty(cn)
+        di = full(sum(x(cn,cn),1));
+        de = d(cn) - di - 2;
+        scores_CH2_L2(i) = sum((1+di)./(1+de));
     end
     
     % L3
-    x_Auv = x(Au,Av);
-    if any(L==[0,3]) && any(x_Auv(:))
-        % compute internal degree and external degree
-        deg_Au = deg(Au); deg_Av = deg(Av);
-        deg_i_Au = full(sum(x_Auv,2))'; deg_i_Av = full(sum(x_Auv,1));
-        if ~isempty(CN)
-            deg_i_CN = full(sum(x(union(Au,Av),CN),1));
-            deg_i_Au(CNu) = deg_i_CN; deg_i_Av(CNv) = deg_i_CN;
-        end
-        deg_e_Au = deg_Au - deg_i_Au - 1 - full(x(v,Au)); deg_e_Av = deg_Av - deg_i_Av - 1 - full(x(u,Av));
-        [e1,e2] = find(x_Auv);
-        degp_i = [reshape(deg_i_Au(e1),1,[]); reshape(deg_i_Av(e2),1,[])];
-        degp_e = [reshape(deg_e_Au(e1),1,[]); reshape(deg_e_Av(e2),1,[])];
-
-        % compute score
-        scores_CH2_L3(i) = sum(geomean(1+degp_i,1)./geomean(1+degp_e,1));
+    [e1,e2] = find(x(Au,Av));
+    paths = [Au(e1); Av(e2)];
+    if any(L==[0,3]) && ~isempty(paths)
+        paths_size = size(paths);
+        paths = reshape(paths, 1, numel(paths));
+        [cn,~,idx] = unique(paths);
+        di = full(sum(x(cn,cn),1));
+        di = di(idx);
+        de = d(paths) - di - full(x(u,paths)) - full(x(v,paths));
+        di = reshape(di, paths_size);
+        de = reshape(de, paths_size);
+        scores_CH2_L3(i) = sum(geomean(1+di,1)./geomean(1+de,1));
     end
 end
 
